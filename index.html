@@ -378,6 +378,25 @@ window.__CL=true</script><style>/* ===== v5 ===== */
 .sx-meta .sx-st{font-weight:600}.sx-meta .sx-st.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}.sx-meta .sx-st.bad{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}.sx-meta .sx-st.warn{background:#f59e0b24;color:#b45309}.sx-meta .sx-st.wait{background:color-mix(in srgb,var(--ac) 12%,transparent);color:var(--ac)}
 .qrow{display:grid;grid-template-columns:1fr 1fr 38px;gap:10px;align-items:end;margin-top:10px;max-width:560px}.qrow input{margin:0}
 </style>
+<script>/* ===== Pelacak "dilihat" untuk halaman client (lapor ke Apps Script: action trackView) ===== */
+(function(){window.__trk=function(p){
+ try{if(/[?&]nt=1/.test(location.search))sessionStorage.setItem('wm_nt','1');if(sessionStorage.getItem('wm_nt'))return}catch(e){}
+ if(!p||!p.u||!p.i||window.__trkOn)return;window.__trkOn=1;
+ var u=p.u,id=p.i,nm=p.n||'',sid=Math.random().toString(36).slice(2,10)+Date.now().toString(36),
+ dev=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'HP':'PC',act=0,sent=0,last=Date.now();
+ var bump=function(){last=Date.now()};
+ ['pointerdown','keydown','scroll','touchstart','mousemove'].forEach(function(e){addEventListener(e,bump,{passive:true,capture:true})});
+ var draft=function(){try{return(JSON.parse(localStorage.getItem('pk_'+id))||[]).length}catch(e){return 0}};
+ var send=function(ev,bc){var d=act-sent;sent=act;
+  var body=JSON.stringify({action:'trackView',id:id,client:nm,sid:sid,ev:ev,d:d,draft:draft(),dev:dev,t:Date.now()});
+  try{if(bc&&navigator.sendBeacon)navigator.sendBeacon(u,new Blob([body],{type:'text/plain;charset=utf-8'}));
+   else fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body,keepalive:true}).catch(function(){})}catch(e){}};
+ setInterval(function(){if(document.visibilityState==='visible'&&Date.now()-last<60000)act++},1000);
+ setInterval(function(){if(document.visibilityState==='visible')send('beat')},20000);
+ document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')send('beat',1);else bump()});
+ addEventListener('pagehide',function(){send('beat',1)});
+ send('open')};})();
+</script>
 </head><body>
 <style>
 #pinov,#pinov *{font-family:'Onest',system-ui,-apple-system,sans-serif;box-sizing:border-box}
@@ -908,7 +927,7 @@ async function cpInit(){
  document.title=p.v+' · Photo Selector';
  if(p.u&&p.i&&!p._pre){document.body.innerHTML='<div style="display:grid;place-items:center;min-height:100vh;font:14px system-ui,sans-serif;opacity:.55">Memuat…</div>';
   try{const j=await Promise.race([fetch(p.u+'?action=getLink&id='+encodeURIComponent(p.i)+'&t='+Date.now()).then(r=>r.json()),new Promise((_,rj)=>setTimeout(rj,6000))]);if(j&&j.found)p.x=j.exp||''}catch(e){}}
- if(p.x&&ymd(new Date())>p.x){cpExpired(p);return}const fm={ch:'both',lf:'dash',...(p.fm||{})},t0=Date.now(),SND='<svg viewBox="0 0 24 24" width=18 height=18 fill=none stroke=currentColor stroke-width=2.2 stroke-linecap=round stroke-linejoin=round><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>';
+ if(p.x&&ymd(new Date())>p.x){cpExpired(p);return}try{window.__trk&&window.__trk(p)}catch(e){}const fm={ch:'both',lf:'dash',...(p.fm||{})},t0=Date.now(),SND='<svg viewBox="0 0 24 24" width=18 height=18 fill=none stroke=currentColor stroke-width=2.2 stroke-linecap=round stroke-linejoin=round><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>';
  const K0='pk_'+p.i,KV='pkv2',rd=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},S=new Set(rd(K0,[])),th=(id,w)=>'https://drive.google.com/thumbnail?id='+id+'&sz=w'+w,
  CW={s:'min(140px,21vw)',m:'min(200px,29vw)',l:'min(280px,44vw)'},dt=p.d?new Date(p.d+'T00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long'}):'',
  cmp=(a,b)=>a.name.localeCompare(b.name,'id',{numeric:true,sensitivity:'base'}),vw={sz:'m',fit:'full',so:'o',nm:'1',...rd(KV,{})};
